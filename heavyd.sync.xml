@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<project name="Sync" default="sync:help" description="Contains all the project code to sync data into a main control data repository.">
+
+    <includepath classpath="${project.basedir}/.heavyd/vendor/surangapg/heavyd-syncc/lib/phing/src" />
+    <taskdef classname="SyncDumpDataTask" name="sync-dump-data" />
+
+    <!-- This implementation is quite light, so only the 'project' and 'dir' property files dist should contain enough data -->
+    <property file="${project.basedir}/properties/dist/project" prefix="project"/>
+    <property file="${project.basedir}/properties/dist/dir" prefix="dir" />
+
+    <target name="sync:help">
+        <exec passthru="true" command="${bin.phing} -l" />
+    </target>
+
+    <target name="sync:run" description="Trigger the sync for the data in this repository.">
+        <fail unless="project.repo.data" message="Aborting, no data repository has been registered."/>
+        <!-- Clone the data dir into the temp directory -->
+        <delete dir="${dir.temp}/data-dir" />
+        <exec command="git clone ${project.repo.data} ${dir.temp}/data-dir" />
+        <sync-dump-data propertyDir="${project.basedir}/properties/dist" outputDir="${dir.temp}/data-dir/projects" projectBaseDir="${project.basedir}"/>
+    </target>
+
+</project>

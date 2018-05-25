@@ -1,0 +1,19 @@
+{
+    "name": "surangapg/heavyd-sync",
+    "description": "Sync all the heavy d project data to a central repository.",
+    "type": "library",
+    "require": {
+        "phing/phing": "^2.16",
+        "symfony/yml": "^2.8|3.0"
+    },
+    "authors": [
+        {
+            "name": "Suranga Panagamuwa Gamage",
+            "email": "suranga@webct.be"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "bin": [
+    ]
+}
