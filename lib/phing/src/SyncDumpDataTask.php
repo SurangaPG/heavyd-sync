@@ -65,6 +65,16 @@ class SyncDumpDataTask extends Task {
       $this->addConfluenceInfo();
     }
 
+    // Add in all the devops information if relevant.
+    if (isset($this->dataArray['dev_ops'])) {
+      $this->addDevOpsInfo();
+    }
+
+    // Add in all the devops information if relevant.
+    if (isset($this->dataArray['instructions'])) {
+      $this->addInstructions();
+    }
+
     // Add in all the server information.
     if (isset($this->dataArray['server'])) {
       $this->addServerData();
@@ -78,6 +88,7 @@ class SyncDumpDataTask extends Task {
    */
   public function addProjectData() {
     $this->outputArray['project'] = [
+      "auto_sync" => "on", // Flag this item as autosyncinc it's data from the source repository.
       "group" => $this->dataArray['project']['group'],
       "name" => $this->dataArray['project']['name'],
       "label" => $this->dataArray['project']['label'],
@@ -102,6 +113,20 @@ class SyncDumpDataTask extends Task {
    */
   public function addConfluenceInfo() {
     $this->outputArray['confluence'] = $this->dataArray['confluence'];
+  }
+
+  /**
+   * Add the data for the "confluence" subpart.
+   */
+  public function addDevOpsInfo() {
+    $this->outputArray['dev_ops'] = $this->dataArray['dev_ops'];
+  }
+
+  /**
+   * Add the data for the "confluence" subpart.
+   */
+  public function addInstructions() {
+    $this->outputArray['instructions'] = $this->dataArray['instructions'];
   }
 
   /**

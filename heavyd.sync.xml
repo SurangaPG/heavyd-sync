@@ -15,10 +15,14 @@
 
     <target name="sync:run" description="Trigger the sync for the data in this repository.">
         <fail unless="project.repo.data" message="Aborting, no data repository has been registered."/>
+        <fail unless="commit.message.source" message="Aborting, the commit message source should be listed, E.g 'Jenkins Build' etc."/>
         <!-- Clone the data dir into the temp directory -->
         <delete dir="${dir.temp}/data-dir" />
         <exec command="git clone ${project.repo.data} ${dir.temp}/data-dir" />
         <sync-dump-data propertyDir="${project.basedir}/properties/dist" outputDir="${dir.temp}/data-dir/projects" projectBaseDir="${project.basedir}"/>
+        <exec dir="${dir.temp}/data-dir" command="git add --all" />
+        <exec dir="${dir.temp}/data-dir" command="git commit -m'${commit.message.source}: Updated property information to match repository.'" />
+        <exec dir="${dir.temp}/data-dir" command="git push" />
     </target>
 
 </project>
