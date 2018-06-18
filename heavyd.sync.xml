@@ -21,7 +21,7 @@
         <exec checkreturn="true" passthru="true" command="git clone ${project.repo.data} ${dir.temp}/data-dir" />
         <sync-dump-data propertyDir="${project.basedir}/properties/dist" outputDir="${dir.temp}/data-dir/${sync.output.dir}" projectBaseDir="${project.basedir}"/>
         <exec checkreturn="true" passthru="true" dir="${dir.temp}/data-dir" command="git add --all" />
-        <exec checkreturn="true" passthru="true" dir="${dir.temp}/data-dir" command="git commit -m'${commit.message.source}: Updated property information to match repository.'" />
+        <exec passthru="true" dir="${dir.temp}/data-dir" command="git commit -m'${commit.message.source}: Updated property information to match repository.'" />
         <exec checkreturn="true" passthru="true" dir="${dir.temp}/data-dir" command="git push" />
     </target>
 </project>
