@@ -45,48 +45,48 @@ class SyncDumpDataTask extends Task {
    */
   public function main() {
 
-    $files = glob($this->getPropertyDir() . '/dist/*.yml');
+    $files = glob($this->getPropertyDir() . '/*.yml');
 
     foreach ($files as $file) {
       $basename = str_replace('.yml', '', basename($file));
-      $this->dataArray[$basename] = Yaml::parseFile($file);
+      $this->dataArray[$basename] = Yaml::parse(file_get_contents($file));
     }
 
     // Generate the file name.
     $this->fileName = $this->dataArray['project']['group'] . '-' . $this->dataArray['project']['machineName'] . '.yml';
 
     // Add in all the project Data.
-    $this->addProjectData();
-    $this->addCodeInfo();
-    $this->addSecurityInfo();
+    $this->writeProjectDataOutput();
+    $this->writeCodeInfoOutput();
+    $this->writeSecurityInfoOutput();
 
     // Add in all the confluence information if relevant.
     if (isset($this->dataArray['confluence'])) {
-      $this->addConfluenceInfo();
+      $this->writeConfluenceInfoOutput();
     }
 
     // Add in all the devops information if relevant.
     if (isset($this->dataArray['dev_ops'])) {
-      $this->addDevOpsInfo();
+      $this->writeDevOpsInfoOutput();
     }
 
     // Add in all the devops information if relevant.
     if (isset($this->dataArray['instructions'])) {
-      $this->addInstructions();
+      $this->writeInstructionsOutput();
     }
 
     // Add in all the server information.
     if (isset($this->dataArray['server'])) {
-      $this->addServerData();
+      $this->writeServerDataOutput();
     }
 
-    file_put_contents($this->getOutputDir() . '/' . $this->fileName, Yaml::dump($this->outputArray, 2, 8));
+    file_put_contents($this->getOutputDir() . '/' . $this->fileName, Yaml::dump($this->outputArray, 6, 2));
   }
 
   /**
    * Add the data for the "project key" in the standardized info.
    */
-  public function addProjectData() {
+  public function writeProjectDataOutput() {
     $this->outputArray['project'] = [
       "auto_sync" => "on", // Flag this item as autosyncinc it's data from the source repository.
       "group" => $this->dataArray['project']['group'],
@@ -100,7 +100,7 @@ class SyncDumpDataTask extends Task {
   /**
    * Add the data for the "code" subpart.
    */
-  public function addCodeInfo() {
+  public function writeCodeInfoOutput() {
     $this->outputArray['code'] = [
       // @TODO Guess this from the git info.
       "repository" => isset($this->dataArray['project']['repository']['main']) ? $this->dataArray['project']['repository']['main'] : 'unspecified',
@@ -111,28 +111,28 @@ class SyncDumpDataTask extends Task {
   /**
    * Add the data for the "confluence" subpart.
    */
-  public function addConfluenceInfo() {
+  public function writeConfluenceInfoOutput() {
     $this->outputArray['confluence'] = $this->dataArray['confluence'];
   }
 
   /**
    * Add the data for the "confluence" subpart.
    */
-  public function addDevOpsInfo() {
+  public function writeDevOpsInfoOutput() {
     $this->outputArray['dev_ops'] = $this->dataArray['dev_ops'];
   }
 
   /**
    * Add the data for the "confluence" subpart.
    */
-  public function addInstructions() {
+  public function writeInstructionsOutput() {
     $this->outputArray['instructions'] = $this->dataArray['instructions'];
   }
 
   /**
    * Add the code for the "security" meta information.
    */
-  public function addSecurityInfo() {
+  public function writeSecurityInfoOutput() {
     if (isset($this->dataArray['security'])) {
       $this->outputArray['security'] = $this->dataArray['security'];
     }
@@ -147,7 +147,7 @@ class SyncDumpDataTask extends Task {
   /**
    * Add the data for the "server key" in the standardized info.
    */
-  public function addServerData() {
+  public function writeServerDataOutput() {
     foreach ($this->dataArray['server'] as $serverKey => $data) {
       // @TODO Might want to standardize this later on.
       $this->outputArray['servers'][$serverKey] = $data;

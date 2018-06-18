@@ -2,7 +2,6 @@
 
 <project name="Sync" default="sync:help" description="Contains all the project code to sync data into a main control data repository.">
 
-    <includepath classpath="${project.basedir}/.heavyd/vendor/surangapg/heavyd-syncc/lib/phing/src" />
     <taskdef classname="SyncDumpDataTask" name="sync-dump-data" />
 
     <!-- This implementation is quite light, so only the 'project' and 'dir' property files dist should contain enough data -->
@@ -13,16 +12,16 @@
         <exec passthru="true" command="${bin.phing} -l" />
     </target>
 
-    <target name="sync:run" description="Trigger the sync for the data in this repository.">
-        <fail unless="project.repo.data" message="Aborting, no data repository has been registered."/>
-        <fail unless="commit.message.source" message="Aborting, the commit message source should be listed, E.g 'Jenkins Build' etc."/>
+    <target name="sync:run" description="Trigger the sync for the data in this repository">
+        <fail unless="project.repo.data" message="Aborting, no data repository has been registered. Pass the 'project.repo.data' property with the correct repository to use."/>
+        <fail unless="commit.message.source" message="Aborting, the commit message source should be listed, Pass the 'commit.message.source' property with a usable messag. E.g 'Jenkins Build' etc."/>
         <!-- Clone the data dir into the temp directory -->
         <delete dir="${dir.temp}/data-dir" />
-        <exec command="git clone ${project.repo.data} ${dir.temp}/data-dir" />
+        <exec checkreturn="true" passthru="true" command="git clone ${project.repo.data} ${dir.temp}/data-dir" />
         <sync-dump-data propertyDir="${project.basedir}/properties/dist" outputDir="${dir.temp}/data-dir/projects" projectBaseDir="${project.basedir}"/>
-        <exec dir="${dir.temp}/data-dir" command="git add --all" />
-        <exec dir="${dir.temp}/data-dir" command="git commit -m'${commit.message.source}: Updated property information to match repository.'" />
-        <exec dir="${dir.temp}/data-dir" command="git push" />
+        <exec checkreturn="true" passthru="true" dir="${dir.temp}/data-dir" command="git add --all" />
+        <exec checkreturn="true" passthru="true" dir="${dir.temp}/data-dir" command="git commit -m'${commit.message.source}: Updated property information to match repository.'" />
+        <exec checkreturn="true" passthru="true" dir="${dir.temp}/data-dir" command="git push" />
     </target>
 
 </project>
