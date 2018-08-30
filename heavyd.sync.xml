@@ -5,8 +5,16 @@
     <taskdef classname="SyncDumpDataTask" name="sync-dump-data" />
 
     <!-- This implementation is quite light, so only the 'project' and 'dir' property files dist should contain enough data -->
-    <property file="${project.basedir}/properties/dist/project" prefix="project"/>
-    <property file="${project.basedir}/properties/dist/dir" prefix="dir" />
+    <property name="output.LOADED_PROPERTIES_EXIST" value="false" />
+    <exec command="if [ -f '${project.basedir}/properties/bin.yml' ]; then echo 'true'; else echo 'false'; fi;" outputProperty="output.LOADED_PROPERTIES_EXIST" />
+    <if>
+        <equals arg1="${output.LOADED_PROPERTIES_EXIST}" arg2="false" />
+        <then>
+            <property file="${project.basedir}/properties/dist/project" prefix="project"/>
+            <property file="${project.basedir}/properties/dist/dir" prefix="dir" />
+        </then>
+    </if>
+
 
     <target name="sync:help">
         <exec passthru="true" command="${bin.phing} -l" />
